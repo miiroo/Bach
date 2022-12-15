@@ -115,6 +115,7 @@ namespace Baka {
             //Prepearing stuff before start searching
             if (tasks.Count != 0) tasks.Clear();
 
+            isPaused = false;
             isFinished = false;
             completed = 0;
             completedForBar = 0;
@@ -140,11 +141,14 @@ namespace Baka {
                         }));
                 });
                 Task.WaitAll(tasks.ToArray());
+
                 if (!foundIssue) {
                     logs.Add("No issue found");
                 }
                 Task.Delay(100);
             });
+
+
             isFinished = true;
             logStrings.Clear();
             ShowAll();
@@ -169,9 +173,10 @@ namespace Baka {
             }
         }
 
-#region UI_update
+        #region UI_update
 
         private void ShowAll() {
+            listView2.Items.Clear();
             foreach (var log in logs) 
                 listView2.Items.Add(log);
         }
@@ -180,7 +185,8 @@ namespace Baka {
                 this.Invoke((Action)LogUpdate);
             }
             else {
-                listView2.Items.Add(logs.Last());
+                if (!isPaused && !isFinished)
+                    listView2.Items.Add(logs.Last());
             }
         }
         private void UpdateBar() {

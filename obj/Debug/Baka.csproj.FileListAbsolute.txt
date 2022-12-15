@@ -1,0 +1,11 @@
+C:\Users\mirkAa\source\repos\Baka\bin\Debug\Baka.exe.config
+C:\Users\mirkAa\source\repos\Baka\bin\Debug\Baka.exe
+C:\Users\mirkAa\source\repos\Baka\bin\Debug\Baka.pdb
+C:\Users\mirkAa\source\repos\Baka\obj\Debug\Baka.csproj.AssemblyReference.cache
+C:\Users\mirkAa\source\repos\Baka\obj\Debug\Baka.csproj.SuggestedBindingRedirects.cache
+C:\Users\mirkAa\source\repos\Baka\obj\Debug\Baka.Form1.resources
+C:\Users\mirkAa\source\repos\Baka\obj\Debug\Baka.Properties.Resources.resources
+C:\Users\mirkAa\source\repos\Baka\obj\Debug\Baka.csproj.GenerateResource.cache
+C:\Users\mirkAa\source\repos\Baka\obj\Debug\Baka.csproj.CoreCompileInputs.cache
+C:\Users\mirkAa\source\repos\Baka\obj\Debug\Baka.exe
+C:\Users\mirkAa\source\repos\Baka\obj\Debug\Baka.pdb

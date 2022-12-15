@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32328.378
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Baka", "Baka.csproj", "{D6BC1C6E-CEFC-472D-9A23-643CDA3DE920}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D6BC1C6E-CEFC-472D-9A23-643CDA3DE920}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6BC1C6E-CEFC-472D-9A23-643CDA3DE920}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6BC1C6E-CEFC-472D-9A23-643CDA3DE920}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6BC1C6E-CEFC-472D-9A23-643CDA3DE920}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8398FED9-CEF2-4FD3-B9E2-1580323B59AF}
+	EndGlobalSection
+EndGlobal

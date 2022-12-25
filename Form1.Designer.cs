@@ -28,6 +28,8 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadVulnerabilityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadLocalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadOnlineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveLogsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.button2 = new System.Windows.Forms.Button();
             this.listView1 = new System.Windows.Forms.ListView();
@@ -89,11 +91,27 @@
             // loadFileToolStripMenuItem
             // 
             this.loadFileToolStripMenuItem.BackColor = System.Drawing.SystemColors.ControlText;
+            this.loadFileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadLocalToolStripMenuItem,
+            this.loadOnlineToolStripMenuItem});
             this.loadFileToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ButtonFace;
             this.loadFileToolStripMenuItem.Name = "loadFileToolStripMenuItem";
             this.loadFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadFileToolStripMenuItem.Text = "Load file";
-            this.loadFileToolStripMenuItem.Click += new System.EventHandler(this.loadFileToolStripMenuItem_Click);
+            // 
+            // loadLocalToolStripMenuItem
+            // 
+            this.loadLocalToolStripMenuItem.Name = "loadLocalToolStripMenuItem";
+            this.loadLocalToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadLocalToolStripMenuItem.Text = "Load local";
+            this.loadLocalToolStripMenuItem.Click += new System.EventHandler(this.loadLocalToolStripMenuItem_Click);
+            // 
+            // loadOnlineToolStripMenuItem
+            // 
+            this.loadOnlineToolStripMenuItem.Name = "loadOnlineToolStripMenuItem";
+            this.loadOnlineToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadOnlineToolStripMenuItem.Text = "Load online";
+            this.loadOnlineToolStripMenuItem.Click += new System.EventHandler(this.loadOnlineToolStripMenuItem_Click);
             // 
             // saveLogsToolStripMenuItem
             // 
@@ -249,6 +267,8 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.ToolStripMenuItem loadLocalToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem loadOnlineToolStripMenuItem;
     }
 }
 

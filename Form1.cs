@@ -8,13 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Net;
 using System.Diagnostics;
 
 namespace Baka {
     public partial class Form1 : Form {
 
         private List<string> vulnerability = new List<string>();
-        private List<string> logStrings = new List<string>();
+        private static List<string> logStrings = new List<string>();
         private List<string> logs = new List<string>();
         private List<Task> tasks = new List<Task>();
         private bool isPaused = false;
@@ -56,7 +57,34 @@ namespace Baka {
                 listView1.Items.Add(vulnerability[i]);
             }
         }
-        private void loadFileToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void saveLogsToolStripMenuItem_Click(object sender, EventArgs e) {
+
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog()) {
+                StreamWriter myStream;
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+                saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+                saveFileDialog1.FilterIndex = 2;
+                saveFileDialog1.RestoreDirectory = true;
+
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK) {
+                    if ((myStream = new StreamWriter(saveFileDialog1.FileName)) != null) {
+                        foreach (var log in listView2.Items) {
+                            myStream.WriteLine(log);
+                        }
+                        myStream.Close();
+                    }
+                }
+            }
+
+        }
+
+        private void loadLocalToolStripMenuItem_Click(object sender, EventArgs e) {
+            logs.Clear();
+            listView2.Items.Clear();
+            isFinished = true;
+            loadedFromInternet = false;
+            Task.Delay(300);
             var filePath = string.Empty;
             logStrings.Clear();
 
@@ -82,29 +110,83 @@ namespace Baka {
                 }
             }
         }
-        private void saveLogsToolStripMenuItem_Click(object sender, EventArgs e) {
 
-            using (SaveFileDialog saveFileDialog = new SaveFileDialog()) {
-                StreamWriter myStream;
-                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+        private void loadOnlineToolStripMenuItem_Click(object sender, EventArgs e) {
+            listView2.Items.Clear();
+            isFinished = true;
+            Task.Delay(10000);
+            isFinished = false;
+            isPaused = false;
+            Task.Run(() => loadFileFromInternet()); 
+        }
 
-                saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-                saveFileDialog1.FilterIndex = 2;
-                saveFileDialog1.RestoreDirectory = true;
 
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK) {
-                    if ((myStream = new StreamWriter(saveFileDialog1.FileName)) != null) {
-                        foreach (var log in logs) {
-                            myStream.WriteLine(log);
-                        }
-                        myStream.Close();
+        private bool loadedFromInternet = false;
+        private static int lastString;
+
+        public async void loadFileFromInternet() {
+            lastString = 0;
+            loadedFromInternet = true;
+            logs.Clear();
+            WebClient wc = new WebClient();
+            wc.DownloadFileCompleted += new AsyncCompletedEventHandler(ReadFile);
+
+            logStrings.Clear();
+            lastListSize = 0;
+
+            while (loadedFromInternet) {
+
+                using (wc) {
+                    wc.Headers.Add("a", "a");
+                    try {
+                       Uri uri = new Uri("https://raw.githubusercontent.com/miiroo/Bach/main/20221212_logs_3days_tab.txt");
+                       wc.DownloadFileAsync(uri, @"./loggs.txt");
+                    }
+                    catch (Exception ex) {
+                        Debug.WriteLine(ex.ToString());
                     }
                 }
+
+                await Task.Delay(5000);
             }
 
         }
-#endregion
 
+        private static bool readed = false;
+        public static void ReadFile(object sender, AsyncCompletedEventArgs e) {
+            readed = false;
+            var filePath = "./loggs.txt";
+            var fileStream = File.OpenRead(filePath);
+            Debug.WriteLine("File Downloaded and start reading");
+            using (StreamReader reader = new StreamReader(fileStream)) {
+                if (lastString == 0) {
+                    while (!reader.EndOfStream) {
+                        lastString++;
+                        logStrings.Add(reader.ReadLine());
+                    }
+                }
+                else {
+                    int currentString = 0;
+                    while (!reader.EndOfStream) {
+                        if (currentString >= lastString) {
+                            lastString++;
+                            logStrings.Add(reader.ReadLine());
+                        }
+                        else {
+                            reader.ReadLine();
+                            currentString++;
+                        }
+                    }
+                }
+                readed = true;
+                Debug.WriteLine("From reading file: "+logStrings.Count);
+            }
+            fileStream.Close();
+        }
+
+        #endregion
+
+        private int lastListSize = 0;
         //Start search
         private async void button1_Click(object sender, EventArgs e) {
             //Check for empty files
@@ -121,15 +203,16 @@ namespace Baka {
             completedForBar = 0;
 
             Task.Run(async () => onLogUpdate());
-            Task.Run(async () => barUpdate());
+            //offline
+            if (!loadedFromInternet) {
+                Task.Run(async () => barUpdate());
+                await Task.Run(() => {
 
-            await Task.Run(() => {
-
-                logStrings.ForEach(x => {
+                    logStrings.ForEach(x => {
                         tasks.Add(Task.Run(async () => {
                             await Task.Delay(100);
                             while (!isPaused) {
-                                vulnerability.ForEach(y => { 
+                                vulnerability.ForEach(y => {
                                     if (x.Contains(y)) {
                                         foundIssue = true;
                                         logs.Add("Vulnerability: " + y + " found in: " + x);
@@ -139,16 +222,44 @@ namespace Baka {
                                 break;
                             }
                         }));
+                    });
+                    Task.WaitAll(tasks.ToArray());
+
+                    if (!foundIssue) {
+                        logs.Add("No issue found");
+                    }
+                    Task.Delay(100);
                 });
-                Task.WaitAll(tasks.ToArray());
+            }
+            //online
+            else {
 
-                if (!foundIssue) {
-                    logs.Add("No issue found");
-                }
-                Task.Delay(100);
-            });
-
-
+                await Task.Run(async () => { 
+                    
+                    while (!isFinished) {
+                        while (!readed) { }
+                        if (!isPaused) {
+                            Debug.WriteLine("From searching: "+logStrings.Count);
+                            if (lastListSize < logStrings.Count) {
+                                int count = logStrings.Count;
+                                string x = "";
+                                for (int i = lastListSize; i<count; i++) {
+                                    x = logStrings[i].ToString();
+                                    vulnerability.ForEach(y => {
+                                        if (x.Contains(y)) {
+                                            foundIssue = true;
+                                            logs.Add("Vulnerability: " + y + " found in: " + x);
+                                        }
+                                    });
+                                }
+                                lastListSize = count; 
+                            }
+                        }
+                        await Task.Delay(10000);
+                    }
+                });
+            }
+            Debug.WriteLine("Im done");
             isFinished = true;
             logStrings.Clear();
             ShowAll();
@@ -166,9 +277,10 @@ namespace Baka {
         //Log updates
         private async void onLogUpdate() {
             while (!isFinished) {
-                if (completed < logs.Count) {
+                int count = logs.Count;
+                if (completed < count) {
                     LogUpdate();
-                    completed = logs.Count;
+                    completed = count;
                 }
             }
         }
@@ -177,8 +289,10 @@ namespace Baka {
 
         private void ShowAll() {
             listView2.Items.Clear();
-            foreach (var log in logs) 
-                listView2.Items.Add(log);
+            var count = logs.Count;
+            for (int i = 0; i < count; i++) {
+                listView2.Items.Add(logs[i]);
+            }
         }
         private void LogUpdate() {
             if (this.InvokeRequired && this != null) {
@@ -186,7 +300,7 @@ namespace Baka {
             }
             else {
                 if (!isPaused && !isFinished)
-                    listView2.Items.Add(logs.Last());
+                    ShowAll();
             }
         }
         private void UpdateBar() {
@@ -207,5 +321,7 @@ namespace Baka {
 
         //Clear logs
         private void button5_Click(object sender, EventArgs e) => listView2.Items.Clear();
+
+
     }
 }

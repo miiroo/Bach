@@ -82,6 +82,7 @@ namespace Baka {
         private void loadLocalToolStripMenuItem_Click(object sender, EventArgs e) {
             logs.Clear();
             listView2.Items.Clear();
+            logStrings.Clear();
             isFinished = true;
             loadedFromInternet = false;
             Task.Delay(300);
@@ -113,6 +114,8 @@ namespace Baka {
 
         private void loadOnlineToolStripMenuItem_Click(object sender, EventArgs e) {
             listView2.Items.Clear();
+            logs.Clear();
+            logStrings.Clear();
             isFinished = true;
             Task.Delay(10000);
             isFinished = false;
